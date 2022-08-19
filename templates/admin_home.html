@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+        <title>Home - Secret Santa</title>
+        <link rel="stylesheet" href="../static/bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Inter:300italic,400italic,600italic,700italic,800italic,400,300,600,700,800&amp;display=swap">
+    </head>
+    <body>
+        <nav class="navbar navbar-dark navbar-expand-md fixed-top navbar-shrink py-3" id="mainNav">
+            <div class="container">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    </span><span>InternFind</span>
+                </a>
+                    <button data-bs-toggle="collapse" class="navbar-toggler" data-bs-target="#navcol-1">
+                        <span class="visually-hidden">Toggle navigation</span><span class="navbar-toggler-icon"></span>
+                    </button>
+                <div class="collapse navbar-collapse" id="navcol-1">
+                        <ul class="navbar-nav" style="margin-left: 35%;"> Welcome, {{ session['full_name'] }}</ul>
+                        <ul class="navbar-nav mx-auto"></ul>
+                        <a class="btn btn-primary shadow" role="button" href="{{ url_for('logout') }}">Logout</a>
+                </div>
+            </div>
+        </nav>
+        <section class="py-2 mt-5">
+            <div class="container py-5" style="padding: 1px !important;">
+                <div class="row mb-5 mt-5">
+                    <div class="col-md-8 col-xl-6 text-center mx-auto">
+                        <div class="row">
+                            <div class="card mb-4 shadow-sm mt-5">
+                                <div class="card-body">
+                                    <h5 class="card-title">Create a new Job</h5>
+                                    <form method="post" class="form-horizontal" style="margin: 1rem !important;">
+                                        <p class="text-muted" style="margin-top: 2.7rem !important;">Create jobs and internships</p>
+                                        <div class="d-flex justify-content-center align-items-center" style="margin: 1rem !important;">
+                                            <div class="btn-group" style="margin-top: 1.3rem !important;">
+                                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#Create">Create</button>
+                                            </div>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>  
+                </div> 
+            </div>
+        </section>
+        <div class="container py-5" style="padding-top: 1px !important;">
+            <h3 class=""><strong>Listed Internships</h3>
+            <hr>
+            <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 d-sm-flex justify-content-sm-center" style="margin-top: 2rem;">
+            {% for job in jobs %}
+                <div class="col mb-4">
+                    <a data-bs-toggle="modal" data-bs-target={{ "#" + job.company_name }} style="cursor: pointer !important;">
+                        <div class="bg-dark border rounded border-dark p-4">
+                            <div class="d-flex">
+                                <div>
+                                    <p class="fw-bold text-primary mb-0">{{ job.company_name }}</p>
+                                    <p class="text-muted mb-1">{{ job.position }}</p>
+                                    <p class="text-muted mb-0">Total Applications : {{ applications[job.job_id-1]|length }}</p>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                </div>
+                <div class="modal fade" id={{ job.company_name }} tabindex="-1" role="dialog" aria-labelledby="{{ job.company_name }}" aria-hidden="true" style="color: black !important;">
+                    <div class="modal-dialog modal-dialog-centered" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="exampleModalLongTitle">Internship Details</h5>
+                            </div>
+                            <div class="modal-body">
+                                <div class = "row">
+                                        <h5 class="text mb-4 fw-bold" > {{ job.company_name }} </h5>
+                                        <p class="text w-100"> Position : {{ job.position }} </p>
+                                        <p class="text w-100"> Job Description : {{ job.j_d }} </p>
+                                        <p class="text w-100"> Last day to apply : {{ job.last_date }} </p>
+                                        <p class="text w-100"> Location : {{ job.location }} </p>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                {{ del_form.job_id( style="display: none", value = job.job_id ) }}
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                {{ del_form.delete( class="btn btn-sm btn-primary", type="submit", value="Delete") }}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        <div class="modal fade" id="Create" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true" style="color: black !important;">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Create Group</h5>
+                    </div>
+                    <div class="modal-body">
+                        <form method="post" class="form-horizontal" style="margin: 1rem !important;" enctype="multipart/form-data">
+                            <div class="form-group">
+                                <label for="group_id" style="margin-bottom: 5px !important; " class="text-muted">Company Name</label>
+                                {{ form.company_name( class="form-control form-control-sm", placeholder="Enter Company Name", style="margin-bottom: 10px !important; color: #504ae7 !important", type="text") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="budget" style="margin-bottom: 5px !important; " class="text-muted">Postion</label>
+                                {{ form.position( class="form-control form-control-sm", placeholder="Position", style="margin-bottom: 10px !important; color: #504ae7 !important", type="text") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="location" style="margin-bottom: 5px !important; " class="text-muted">Job Description</label>
+                                {{ form.j_d( class="form-control form-control-sm", placeholder="Job Description", style="margin-bottom: 10px !important; color: #504ae7 !important", type="text") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="budget" style="margin-bottom: 5px !important; " class="text-muted">Last Date to apply</label>
+                                {{ form.last_date( class="form-control form-control-sm", placeholder="Date", style="margin-bottom: 10px !important; color: #504ae7 !important", type="date") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="budget" style="margin-bottom: 5px !important; " class="text-muted">Budget</label>
+                                {{ form.expected_salary( class="form-control form-control-sm", placeholder="Enter Salary", style="margin-bottom: 10px !important; color: #504ae7 !important", type="text") }}
+                            </div>
+                            <div class="form-group">
+                                <label for="budget" style="margin-bottom: 5px !important; " class="text-muted">Location</label>
+                                {{ form.location( class="form-control form-control-sm", placeholder="Enter Location", style="margin-bottom: 10px !important; color: #504ae7 !important", type="text") }}
+                            </div>
+                                {{ form.csrf_token }}
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-sm btn-outline-secondary" data-bs-dismiss="modal">Close</button>
+                                {{ form.submit( class="btn btn-sm btn-primary", type="submit", value="Create") }}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="../static/js/jquery.min.js"></script>
+        <script src="../static/bootstrap/js/bootstrap.min.js"></script>
+        <script src="../static/js/bs-init.js"></script>
+        <script src="../static/js/bold-and-dark.js"></script>
+    </body>
+</html>
+
+
+
